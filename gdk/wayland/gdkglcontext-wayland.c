@@ -314,6 +314,9 @@ gdk_wayland_display_init_gl (GdkDisplay *display)
   GdkWaylandDisplay *display_wayland = GDK_WAYLAND_DISPLAY (display);
   EGLint major, minor;
   EGLDisplay dpy;
+  gboolean use_es;
+
+  use_es = ((_gdk_gl_flags & GDK_GL_GLES) != 0);
 
   if (display_wayland->have_egl)
     return TRUE;
@@ -326,7 +329,7 @@ gdk_wayland_display_init_gl (GdkDisplay *display)
   if (!eglInitialize (dpy, &major, &minor))
     return FALSE;
 
-  if (!eglBindAPI (EGL_OPENGL_API))
+  if (!eglBindAPI (use_es ? EGL_OPENGL_ES_API : EGL_OPENGL_API))
     return FALSE;
 
   display_wayland->egl_display = dpy;
