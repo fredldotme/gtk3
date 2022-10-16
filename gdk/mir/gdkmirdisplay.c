@@ -1005,6 +1005,9 @@ _gdk_mir_display_init_egl_display (GdkDisplay *display)
   GdkMirDisplay *mir_dpy = GDK_MIR_DISPLAY (display);
   EGLint major_version, minor_version;
   EGLDisplay *dpy;
+  gboolean use_es;
+
+  use_es = ((_gdk_gl_flags & GDK_GL_GLES) != 0);
 
   if (mir_dpy->egl_display)
     return TRUE;
@@ -1016,7 +1019,7 @@ _gdk_mir_display_init_egl_display (GdkDisplay *display)
   if (!eglInitialize (dpy, &major_version, &minor_version))
     return FALSE;
 
-  if (!eglBindAPI (EGL_OPENGL_API))
+  if (!eglBindAPI (use_es ? EGL_OPENGL_ES_API : EGL_OPENGL_API))
     return FALSE;
 
   mir_dpy->egl_display = dpy;
